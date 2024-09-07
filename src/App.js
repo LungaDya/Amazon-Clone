@@ -1,4 +1,3 @@
-import "./App.css";
 import { Redirect, Route, Switch } from "react-router-dom";
 import Home from "./components/Home";
 import Products from "./components/Products";
