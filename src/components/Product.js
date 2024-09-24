@@ -1,19 +1,34 @@
-import React from "react";
-import './Product.css';
-
+import React, { useContext } from "react";
+import "./Product.css";
+import ShoppingContext from "../context/shopping/shoppingContext";
 
 const Product = ({ id, image, title, rating, price }) => {
+  const shoppingContext = useContext(ShoppingContext);
+  const { addToBasket } = shoppingContext;
+
+  const addToBasketHandler = () => {
+    addToBasket({ item: { id, image, title, rating, price } });
+  };
   return (
-    <div className="product">
+    <div className="product" key={id}>
       <img src={image} alt="" />
       <div className="product_info">
         <p>{title}</p>
-      <div className="product_rating">
-          <p>{rating}</p>
+        <div className="product_rating">
+          {Array(rating)
+            .fill()
+            .map((_, i) => (
+              <p key={i}>⭐</p>
+            ))}
         </div>
-        <p className="product_price">{price}</p>
+        <p className="product_price">
+          <small>R</small>
+          <strong>{price}</strong>
+        </p>
       </div>
-      <button className="product_button">Add to Basket</button>
+      <button className="product_button" onClick={addToBasketHandler}>
+        Add to Basket
+      </button>
     </div>
   );
 };

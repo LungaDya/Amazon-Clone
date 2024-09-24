@@ -7,13 +7,25 @@ export const ShoppingState = (props) => {
   const [state, dispatch] = useReducer(shoppingReducer, initialState);
 
   // Selectors
-  const getBasketTotal = (basket) => {
+  const getBasketTotal = (basket) =>
     basket?.reduce((amount, item) => item.price + amount, 0);
-  };
+
   const addToBasket = async (item) => {
     dispatch({
       type: "ADD_TO_BASKET",
       payload: item,
+    });
+  };
+
+  const removefromBasket = (item) => {
+    dispatch({ type: "REMOVE_FROM_BASKET", payload: item });
+  };
+
+  const setUser = (user) => {
+    console.log("User payload", user);
+    dispatch({
+      type: "SET_USER",
+      payload: user,
     });
   };
 
@@ -24,9 +36,11 @@ export const ShoppingState = (props) => {
         user: state.user,
         getBasketTotal,
         addToBasket,
+        setUser,
+        removefromBasket,
       }}
     >
-      {props.childern}
+      {props.children}
     </ShoppingContext.Provider>
   );
 };

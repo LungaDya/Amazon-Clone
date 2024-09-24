@@ -1,57 +1,35 @@
-import React, { useState, useReducer, useEffect, useContext } from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useHistory } from "react-router-dom";
 import "./Login.css";
-import AuthContext from "../context/authContext";
+import { auth } from "../firebase";
 
-const reducer = (state, action) => {
-  if (action.type === "EMAIL_INPUT") {
-    return { ...state, emailValue: action.payload };
-  }
-  if (action.type === "PASS_INPUT") {
-    return { ...state, passwordValue: action.payload };
-  }
-  return { emailValue: "", passwordValue: "" };
-};
-
-const Login = ({onLogin}) => {
-  const ctx = useContext(AuthContext);
-  const [formIsValid, setFormIsValid] = useState(false);
-
-  const [state, dispatch] = useReducer(reducer, {
-    emailValue: "",
-    passwordValue: "",
-  });
-
-  const { emailValue: email, passwordValue: password} = state;
-
-  useEffect(() => {
-    const identifier = setTimeout(() => {
-      console.log("CHECKING FORM VALIDITY");
-      setFormIsValid(email.includes("@") && state.password.trim().length > 6);
-    }, 500);
-    return () => {
-      console.log("CLEANUP HERE");
-      clearTimeout(identifier);
-    };
-  }, [email, password]);
-
-
-  const emailChangeHandler = (e) => {
-    dispatch({ type: "EMAIL_INPUT", payload: e.target.value });
-  
-  };
-
-  const passwordChangeHandler = (e) => {
-    dispatch({ type: "PASS_INPUT", payload: e.target.value });
-    
-  };
+const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const history = useHistory();
 
   const signIn = (e) => {
     e.preventDefault();
-    console.log("ENTERED Email: ", state.emailValue);
-    console.log("ENTERED Password: ", state.passwordValue);
-    ctx.onLogin(state.emailValue, state.passwordValue);
+    auth
+      .signInWithEmailAndPassword(email, password)
+      .then((auth) => {
+        history.push("/");
+      })
+      .catch((error) => alert(error.message));
   };
+
+  const register = (e) => {
+    e.preventDefault();
+    auth
+      .createUserWithEmailAndPassword(email, password)
+      .then((auth) => {
+        if (auth) {
+          history.push("/");
+        }
+      })
+      .catch((error) => alert(error.message));
+  };
+
 
   return (
     <div className="login">
@@ -68,15 +46,15 @@ const Login = ({onLogin}) => {
           <h5>E-mail</h5>
           <input
             type="text"
-            value={state.emailValue}
-            onChange={emailChangeHandler}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
 
           <h5>Password</h5>
           <input
             type="password"
-            value={state.passwordValue}
-            onChange={passwordChangeHandler}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
           />
           <button type="submit" className="login_signInButton" onClick={signIn}>
             Sign In
@@ -87,7 +65,7 @@ const Login = ({onLogin}) => {
           Sale. Please see our Privacy Notice, our Cookies Notioe and our
           Interest-Based Ads Notice
         </p>
-        <button className="login_registerButton">
+        <button className="login_registerButton" onClick={register}>
           Create your Amazon Account
         </button>
       </div>
