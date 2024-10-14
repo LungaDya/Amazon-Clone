@@ -18,7 +18,7 @@ const Products = () => {
     title="Genius 31330007400 Slimstar C126 USB Keyboard and Mouse Combo, Black"
     image="https://m.media-amazon.com/images/I/416+N+9TYTL._AC_UL640_FMwebp_QL65_.jpg"
     rating='4'
-    price='269'
+    price={269}
     />
     </div>
     <div className='products_row'>
