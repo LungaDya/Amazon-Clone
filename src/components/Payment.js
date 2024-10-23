@@ -21,19 +21,26 @@ const Payment = () => {
   const [processing, setProcessing] = useState("");
   const [error, setError] = useState(null);
   const [disabled, setDisabled] = useState(true);
-  const [clientSecret, setClientSecret] = useState(false);
+  const [clientSecret, setClientSecret] = useState(true);
 
+  
   useEffect(() => {
-    //Generate the special strip secret which will allow us to charge the customer
+    //   //Generate the special strip secret which will allow us to charge the customer
     const getClientSecret = async () => {
-      const response = await axios({
-        method: "POST",
-        url: `/payments/create?total=${getBasketTotal(basket)}`,
-      });
-      setClientSecret(response.data.clientSecret);
+      try {
+        const response = await axios({
+          method: 'post',
+          url: `/payments/create?total=${getBasketTotal(basket) * 100}`,
+        });
+        console.log('Backend response:', response.data);
+        setClientSecret(response.data.clientSecret);
+      } catch (error) {
+        console.error('Error fetching client secret:', error.response ? error.response.data : error.message);
+      }
     };
     getClientSecret();
   }, [basket, getBasketTotal]);
+
 
   console.log("The secret is => ", clientSecret);
 
